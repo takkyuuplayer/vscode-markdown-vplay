@@ -76,6 +76,22 @@ export class MarkdownVplay {
         const code = editor.document.getText(new vscode.Range(start, end));
         return [code, end.line + 1];
     };
+
+    private appendMDText = (editor: vscode.TextEditor, targetLine: number, text: string) => {
+        let eol: string;
+        switch (editor.document.eol) {
+            case vscode.EndOfLine.CRLF:
+                eol = "\r\n";
+                break;
+            default:
+                eol = "\n";
+        }
+        const outputText = eol + "```" + `${eol}${text}${text.endsWith(eol) ? "" : eol}` + "```" + eol;
+        editor.edit((editBuilder) => {
+            editBuilder.insert(new vscode.Position(targetLine, 0), outputText);
+        });
+    };
+
     public run = () => {
         if(!vscode.window.activeTextEditor) {
             return;
@@ -86,6 +102,7 @@ export class MarkdownVplay {
             const [code, endLine] = this.detectSource(editor);
             const cwd = this.getWorkdir(editor);
             const output = this.runVCode(code, cwd);
+            this.appendMDText(editor, endLine, output);
         } catch (e ) {
             if(e instanceof NotFoundCodeSectionError) {
                 vscode.window.showErrorMessage("Not found go code section.");
