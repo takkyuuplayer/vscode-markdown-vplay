@@ -19,7 +19,17 @@
 				"command": "markdown-vplay.execute-cursor",
 				"title": "markdown-vplay: V run code block at cursor"
 			}
-		]
+		],
+		"configuration": {
+			"title": "Markdown Vplay",
+			"properties": {
+				"markdownGoplay.workdir": {
+					"type": "string",
+					"default": "",
+					"description": "Workdir for v run. When null, it uses a dir of the current file."
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
